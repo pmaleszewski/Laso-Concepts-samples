@@ -1,0 +1,87 @@
+<!-- Left Side -->
+<div class="col-md-4 site-message-center_mainDiv_boxLeft">
+    <div class="panel panel-inverse">
+        <div class="panel-heading">
+            <h4 class="panel-title">Contact</h4>
+        </div>
+        <div class="row panel-body">
+            <div class="col-sm-6">
+                <label>Profile Type</label>
+                <select class="form-control pull-right" ng-model="$ctrl.profileFilter">
+                    <option value="">All</option>
+                    <option value="institution admin">Institution Admin</option>
+                    <option value="location admin">Location Admin</option>
+                    <option value="mentor">Mentor</option>
+                    <option value="client">Client</option>
+                </select>
+            </div>
+        </div>
+        <div class="panel-body site-message-center-contactlist">
+            <div class="panel bg-silver-lighter" slim-scroll size='5' >
+                
+                <!-- Super Admins -->
+
+                <div ng-model="$ctrl.contactList" class="site-message-center_silverbox_inner_div" ng-repeat="contact in $ctrl.contacts | orderBy: 'profileOverrides.name' | filter : $ctrl.filterDropDown($ctrl.profileFilter)">
+                    <cross-content-view type="contact" view-info="contact"></cross-content-view>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div ui-view="detail"></div>
+
+
+
+<!-- Right Side this the other side which goes into detail view--> 
+<div class="col-md-8 site-message-center_mainDiv_boxRight">
+    <div class="panel panel-inverse pull-right">
+        <div class="panel-heading">
+            <h4 class="panel-title">Direct Message with {{$ctrl.contact.profileOverrides.name ? $ctrl.contact.profileOverrides.name : $ctrl.contact.user.defaultDisplayName }}</h4>
+        </div>
+        <button class="btn btn-default btn-xs" style="margin-left: 15px; margin-top: 15px; margin-bottom: 0;" ng-click="$ctrl.refreshChat()">Refresh
+            <i class="fa fa-refresh"></i>
+        </button>
+        <div class="panel-body">
+            <div class="panel bg-silver-lighter">
+                <div class="site-direct-message_silver_box">
+
+                    <!-- begin chat LOOK AT THE INVALID DATES COMING BACK FROM PROJECT-->
+                    <div class="crud-site-helpcenter-detail_chatPanel panel-body" id="chatBox">
+                        <div>
+                            <ul class="chats">
+                                <li ng-class="{'right': $ctrl.isCurrentUser(message.profileId)}" ng-init="$ctrl.scroll = $last" ng-repeat="message in $ctrl.directMessages.messages">
+                                    <span class="date-time">{{message.dateCreated | date: 'short'}}</span>
+                                    <a href="javascript:;" class="name">{{message.profile.profileOverrides.name ? message.profile.profileOverrides.name : message.profile.user.defaultDisplayName}}</a>
+                                    <a href="javascript:;" class="image">
+                                        <img class="help-center_ticket-detail-profileImg" ng-src="{{message.profile.profileOverrides.imageUrl ? message.profile.profileOverrides.imageUrl : message.profile.user.defaultImageUrl}}">
+                                    </a>
+                                    <div class="message help-center_ticket-detail-reply">
+                                        <p ng-class="{'text-right': $ctrl.isCurrentUser(message.destination.id)}">{{message.content}}</p>
+                                    </div>
+                                </li>
+                                <li class="m-t-0" id="bottom"></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- begin reply form -->
+                    <div class="panel-footer bg-silver">
+                        <p></p>
+                        <form name="$ctrl.replyForm" ng-submit="$ctrl.submitReply()" novalidate>
+                            <div class="input-group">
+                                <input type="text" name="content" ng-model="$ctrl.formData.content" class="form-control bg-white" placeholder="Enter message" required>
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn btn-theme pull-right" ng-disabled="$ctrl.replyForm.content.$invalid">Reply
+                                        <i class="fa fa-paper-plane"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
